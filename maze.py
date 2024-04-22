@@ -11,6 +11,12 @@ mixer.music.load("nagets.mp3")
 mixer.music.play()
 mixer.music.set_volume(0.5)
 #створи вікно гри
+MAP_WIDTH , MAP_HEIGHT = 25,20 #ширина і висота карти
+TILESIZE = 40 #розмір квадратика карти
+WIDTH, HEIGHT = MAP_WIDTH*TILESIZE, MAP_HEIGHT*TILESIZE 
+
+
+
 WIDTH, HEIGHT = 1100,750
 
 window = display.set_mode((WIDTH, HEIGHT)) #створення дисплею 
@@ -55,9 +61,27 @@ class Player(Sprite):
         if key_pressed[K_d] and self.rect.right < WIDTH :
             self.rect.x += self.speed
 
-player = Player(hero,70,70,300,300)
+player = Player(hero,TILESIZE,TILESIZE,300,300)
+walls = sprite.Group()
 
-
+with open("map.txt", "r") as f:
+    map = f.readlines()
+    x = 0
+    y = 0
+    for line in map:
+        for symbol in line:
+            if symbol == "w":
+                walls.add(Sprite(wall,TILESIZE,TILESIZE,x,y))
+            if symbol == "p":
+                player.rect.x = x
+                player.rect.y = y
+            if symbol == "t":
+                treasure = Sprite(treasure,70.70,x,y)
+            
+                x += TILESIZE
+        y += TILESIZE
+        x = 0
+        
 run = True
 
 while run: #поки відбувається цикл
