@@ -5,6 +5,9 @@ from pygame import * #імпортування бібліотеки пайгей
 
 init()
 mixer.init()
+font.init()
+font1 = font.SysFont("Impact",100)
+game_over_text = font1.render("Game Over",True,(255,0,0))
 mixer.music.load("nagets.mp3")
 # mixer.music.load("kick.ogg")
 # mixer.music.load("money.ogg")
@@ -68,6 +71,11 @@ class Player(Sprite):
         if len(collide_list) > 0:
             self.rect.x , self.rect.y = old_pos
 
+        enemy_collide = sprite.spritecollide(self,cyborgs,False,sprite.collide_mask) 
+        if len(enemy_collide) > 0:
+            self.hp -= 100
+            #hero.kill()
+            
 
 class Enemy(Sprite):
     def __init__(self, sprite_img, width, height, x, y):
@@ -83,6 +91,7 @@ class Enemy(Sprite):
         #     self.rect.x , self.rect.y = old_pos
 
     def update(self):
+        old_pos = self.rect.x,self.rect.y
         if self.dir == "right":
             self.rect.x += self.speed
         elif self.dir == "left":
@@ -92,6 +101,10 @@ class Enemy(Sprite):
         elif self.dir == "down":
             self.rect.y -= self.speed
 
+        collide_list = sprite.spritecollide(self,walls,False,sprite.collide_mask)
+        if len(collide_list) > 0:
+            self.rect.x,self.rect.y = old_pos
+            self.dir = choice(self.dir_list)
 
 player = Player(hero,TILESIZE-5,TILESIZE-5,300,300)
 walls = sprite.Group()
@@ -117,20 +130,27 @@ with open("map.txt", "r") as f:
             x += TILESIZE
         y += TILESIZE
         x = 0
+
         
 run = True
-
+finish = False
 while run: #поки відбувається цикл
     for e in event.get(): #отримання значення 
         if e.type == QUIT: #якщо відбувається вихід
             run = False #цикл закінчується
 
-
+    if player.hp <= 0:
+        finish = True
     
+    if sprite.collide_mask(player,treasure):
+        finish = True
+        game_over_text = font1.render("You Win",True,(255,0,0))
     window.blit(bg,(0,0)) #загрузка заднього фону
     all_sprites.draw(window)
-    all_sprites.update()
-
+    if not finish:
+        all_sprites.update()
+    if finish:
+        window.blit(game_over_text ,(200,200))
 
     
     display.update() #обновлення події дисплею
