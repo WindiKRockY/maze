@@ -1,14 +1,16 @@
 #створи гру "Лабіринт"!
 from random import choice
 from pygame import * #імпортування бібліотеки пайгейм
+import pygame
 
-
+pygame.init()
 init()
 mixer.init()
 font.init()
 font1 = font.SysFont("Impact",100)
 game_over_text = font1.render("Game Over",True,(255,0,0))
 mixer.music.load("nagets.mp3")
+game_over_mus = pygame.mixer.Sound("hi-hi-hi-ha-clash-royale.mp3")
 # mixer.music.load("kick.ogg")
 # mixer.music.load("money.ogg")
 
@@ -28,11 +30,11 @@ FPS = 90 #змінна,яка відровідає за частоту кадр�
 clock= time.Clock() #змінна часу
 
 
-bg = image.load("background.jpg")
+bg = image.load("map-maze.jpg")
 bg= transform.scale(bg ,(WIDTH, HEIGHT))
-cyborg = image.load('cyborg.png')  #імпортування другого спрайту
-hero = image.load('hero.png')  #імпортування другого спрайту
-wall= image.load('wall.png')  #імпортування другого спрайту
+cyborg = image.load('mem.jpg')  #імпортування другого спрайту
+hero = image.load('nuggets.jpg')  #імпортування другого спрайту
+wall= image.load('cactus.jpg')  #імпортування другого спрайту
 treasure= image.load('treasure.png')  #імпортування другого спрайту
 
 
@@ -141,7 +143,8 @@ while run: #поки відбувається цикл
 
     if player.hp <= 0:
         finish = True
-    
+        game_over_mus.play()
+
     if sprite.collide_mask(player,treasure):
         finish = True
         game_over_text = font1.render("You Win",True,(255,0,0))
